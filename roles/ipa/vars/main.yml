@@ -1,0 +1,19 @@
+---
+# vars file for ipa
+root_required_vars:
+  - ipaserver_realm
+  - ipaserver_domain
+  - ipaserver_admin_password
+  - ipaserver_dir_admin_password
+  - ipaserver_manage_firewalld
+
+root_excluded_vars:
+  - replicate_with
+
+replicant_required_vars:
+  - join_account
+  - join_password
+  - replicate_with
+
+ipaserver_base_command: ipa-server-install
+

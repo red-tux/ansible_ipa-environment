@@ -1,0 +1,29 @@
+---
+# Playbooks to install FreeIPA/IdM root node and replicants
+# The plays are duplicated as the roles leverage the group membership, and
+# to ensure the root node is installed first.
+
+# Required variables for the root node:
+#
+# ipaserver_real
+# ipaserver_domain
+# ipaserver_admin_password
+# ipaserver_dir_admin_password
+
+- hosts: ipa-root
+  become: true
+
+  roles:
+  - ipa
+
+# Required variables for the replicant nodes:
+#
+# join_account
+# join_password
+# replicate_with
+
+- hosts: ipa-replicants
+  become: true
+
+  roles:
+  - ipa

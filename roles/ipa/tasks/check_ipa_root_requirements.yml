@@ -1,0 +1,10 @@
+- name: Checking for root required variables
+  fail: msg="Variable '{{ item }}' is not defined"
+  when: "{{ item }} is not defined"
+  with_items: "{{ root_required_vars }}"
+
+- name: Checking for root excluded variables
+  fail: msg="{{ item }} cannot be defined for ipa-root"
+  when: "{{ item }} is defined"
+  with_items: "{{ root_excluded_vars }}"
+

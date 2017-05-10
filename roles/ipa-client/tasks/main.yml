@@ -1,0 +1,48 @@
+---
+# tasks file for ipa-client
+- name: Checking for Required Variables
+  fail: msg="Variable '{{ item }}' is not defined"
+  when: "{{ item }} is not defined"
+  with_items: "{{ required_vars }}"
+
+- name: Update resolv.conf
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+
+- debug:
+    msg: "System FQDN: {{ ansible_fqdn }}"
+
+- debug:
+    msg: "ipa_force_hostname: {{ ipa_force_hostname | default('__undefined__') }}"
+
+- name: Check hostname on host
+  fail:
+    msg: "The hostname is invalid and no ipa_force_hostname passed in.  Hostname: {{ ansible_fqdn }}"
+  when: 
+    - ansible_fqdn.split('.')[0] == "localhost"
+    - ipa_force_hostname | default('__undefined__') == "__undefined__"
+
+- name: Install IDM client
+  yum:
+    name: ipa-client
+    state: present
+
+- name: Run client install utility
+  command: >
+    ipa-client-install 
+    -U
+    -p {{ ipa_join_account }}
+    -w $JOIN_PASSWORD
+    --mkhomedir
+    {{ '--server %s' % ipa_server if ipa_server | default(False) else '' }}
+    {{ '--domain %s' % ipa_domain if ipa_domain | default(False) else '' }}
+    {{ '--hostname %s' % ipa_force_hostname if ipa_force_hostname | default(False) else '' }}
+    {{ '--force-join' if ipa_force_join | default(True) else '' }}
+    {{ '--request-cert' if ipa_request_cert | default(False) else '' }}
+    {{ '--configure-firefox' if ipa_configure_firefox | default(False) else '' }}
+  args:
+    creates: /etc/krb5.keytab
+  environment:
+    JOIN_PASSWORD: "{{ ipa_join_password }}"
+

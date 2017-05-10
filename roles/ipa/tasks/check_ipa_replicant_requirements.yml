@@ -1,0 +1,5 @@
+- name: Checking for replicant required variables
+  fail: msg="{{ item }} is required for ipa-replicants"
+  when: "{{ item }} is not defined"
+  with_items: "{{ replicant_required_vars }}"
+

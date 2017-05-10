@@ -1,0 +1,5 @@
+---
+# vars file for ipa-dns
+required_vars:
+  - subdomain
+  - ipa_servers

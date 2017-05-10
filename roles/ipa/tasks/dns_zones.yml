@@ -1,0 +1,9 @@
+- name: Configure the reverse dns
+  shell: ipa dnszone-add --allow-sync-ptr=true --dynamic-update=true "{{ zone }}"
+  register: ipa_out
+  failed_when: "'already exists' not in ipa_out.stderr and ipa_out.rc!=0"
+  changed_when: "'already exists' not in ipa_out.stderr"
+
+- debug:
+    msg: "{{ ipa_out }}"
+

@@ -1,0 +1,124 @@
+--
+# tasks file for ipa
+
+# Task will fail if ipa-root AND ipa-replicant groups are not present
+- name: Checking group membership
+  fail: msg="Host is not a member of ipa-root or ipa-replicant group"
+  when: 
+    - '"ipa-root" not in group_names'
+    - '"ipa-replicant" not in group_names'
+  tags: always
+
+# Task will fail if ipa-root AND ipa-replicant groups are present, cannot be a member of both
+- name: Checking group membership exclusivity
+  fail: msg="Host cannot be a member of both ipa-root and ipa-replicant group"
+  when: 
+    - '"ipa-root" in group_names'
+    - '"ipa-replicant" in group_names'
+  tags: always
+
+- include: check_ipa_root_requrements.yml
+  when: '"ipa-root" in group_names'
+  tags: always
+
+- include: check_ipa_replicant_requirements.yml
+  when: '"ipa-replicant" in group_names'
+  tags: always
+
+- set_fact:
+    is_ipa_root: "{{ replicate_with is not defined }}"
+
+- name: Configure ipa-client for replicant nodes
+  include_role:
+    name: ipa-client
+  when: not is_ipa_root
+
+- name: Ensure software is installed (yum)
+  yum: 
+    name: "{{ item }}"
+    state: present
+  with_items: 
+    - ipa-server
+    - ipa-server-dns
+    - ipa-admintools
+
+- name: Install Random Number Generator Daemon
+  yum:
+    name: rng-tools
+  when: install_rngd | default(False)
+
+- name: Start rngd
+  command: rngd -r /dev/urandom
+  when: install_rngd | default(False)
+
+
+- name: create template script for ipa-install
+  template:
+    src: ans-ipa-root-install.sh.j2
+    dest: /root/ans-ipa-srv-install.sh
+    owner: root
+    group: root
+    mode: 744
+  when: is_ipa_root
+
+- name: create template script for ipa-install
+  template:
+    src: ans-ipa-replicant-install.sh.j2
+    dest: /root/ans-ipa-srv-install.sh
+    owner: root
+    group: root
+    mode: 744
+  when: not is_ipa_root
+
+- name: Run the installer
+  command: /root/ans-ipa-srv-install.sh
+  args:
+    creates: /etc/ipa/default.conf
+
+#- include: firewalld.yml
+#  when: ipaserver_manage_firewalld | default(false)
+
+- name: Disable firewall
+  service:
+    name: firewalld
+    state: stopped
+    enabled: false
+
+# Documentation says to create a "." zone in enclaved environments.  This breaks reverse
+# DNS, work aroud is to disable root hints.
+- name: Disable DNS root hints
+  shell: sed -i.orig  '/zone "\." IN/,+3 s/^/#/' /etc/named.conf
+  tags: dns
+ 
+- name: Restart named
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: named-pkcs11
+  tags: dns
+
+- name: kinit for the admin user
+  shell: echo {{ ipaserver_admin_password|quote }} | kinit admin
+  when: zones is defined
+  tags: dns
+
+#- name: Configure the reverse dns
+#  shell: ipa dnszone-add --allow-sync-ptr=true --dynamic-update=true 92.165.in-addr.arpa
+#  register: ipa_out
+#  failed_when: "'already exists' not in ipa_out.stderr and ipa_out.rc!=0"
+#  changed_when: "'already exists' not in ipa_out.stderr"
+#  tags: dns
+
+#- debug: 
+#    msg: "{{ ipa_out }}"
+#  tags: dns
+
+- include: dns_zones.yml zone="{{ item }}"
+  with_items: "{{ zones }}"
+  when: zones is defined
+  tags: dns
+
+- name: Delete admin kerberos key
+  shell: kdestroy
+  when: zones is defined
+  tags: dns
