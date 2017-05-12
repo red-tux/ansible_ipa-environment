@@ -4,8 +4,8 @@ ipa-server-install \
 -U \
 --realm {{ ipaserver_realm }} \
 --domain {{ ipaserver_domain }} \
--a {{ ipaserver_admin_password }} \
--p {{ ipaserver_dir_admin_password }} \
+-a $(ADMIN_PASSWORD) \
+-p $(DIR_PASSWORD) \
 --hostname={{ hostname | default(ansible_fqdn)}} \
 --ip-address={{ ansible_eth0.ipv4.address }} \
 {{ '--idstart=%s' % ipaserver_idstart if ipaserver_idstart | default(False) else '' }} \

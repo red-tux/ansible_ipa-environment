@@ -71,9 +71,12 @@
   when: not is_ipa_root
 
 - name: Run the installer
-  command: /root/ans-ipa-srv-install.sh
+  shell: /root/ans-ipa-srv-install.sh
   args:
     creates: /etc/ipa/default.conf
+  environment:
+    ADMIN_PASSWORD: "{{ ipaserver_admin_password }}"
+    DIR_PASSWORD: "{{ ipaserver_dir_admin_password }}"
 
 #- include: firewalld.yml
 #  when: ipaserver_manage_firewalld | default(false)
