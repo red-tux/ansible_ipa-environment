@@ -1,4 +1,4 @@
---
+---
 # tasks file for ipa
 
 # Task will fail if ipa-root AND ipa-replicant groups are not present
@@ -17,7 +17,7 @@
     - '"ipa-replicant" in group_names'
   tags: always
 
-- include: check_ipa_root_requrements.yml
+- include: check_ipa_root_requirements.yml
   when: '"ipa-root" in group_names'
   tags: always
 
