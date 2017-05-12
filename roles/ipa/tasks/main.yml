@@ -75,8 +75,9 @@
   args:
     creates: /etc/ipa/default.conf
   environment:
-    ADMIN_PASSWORD: "{{ ipaserver_admin_password }}"
-    DIR_PASSWORD: "{{ ipaserver_dir_admin_password }}"
+    ADMIN_PASSWORD: "{{ ipaserver_admin_password | default('none') }}"
+    DIR_PASSWORD: "{{ ipaserver_dir_admin_password | default('none') }}"
+    JOIN_PASSWORD: "{{ join_password | default('none') }}"
 
 #- include: firewalld.yml
 #  when: ipaserver_manage_firewalld | default(false)
