@@ -5,7 +5,7 @@ root_required_vars:
   - ipaserver_domain
   - ipaserver_admin_password
   - ipaserver_dir_admin_password
-  - ipaserver_manage_firewalld
+    #  - ipaserver_manage_firewalld
 
 root_excluded_vars:
   - replicate_with
