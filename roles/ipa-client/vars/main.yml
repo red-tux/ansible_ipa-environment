@@ -3,6 +3,6 @@
 required_vars:
 - dns_servers
 - dns_search_domain
-- ipa_join_account
-- ipa_join_password
+- join_account
+- join_password
 

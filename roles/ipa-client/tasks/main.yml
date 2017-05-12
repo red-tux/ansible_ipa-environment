@@ -32,7 +32,7 @@
   command: >
     ipa-client-install 
     -U
-    -p {{ ipa_join_account }}
+    -p {{ join_account }}
     -w $JOIN_PASSWORD
     --mkhomedir
     {{ '--server %s' % ipa_server if ipa_server | default(False) else '' }}
@@ -44,5 +44,5 @@
   args:
     creates: /etc/krb5.keytab
   environment:
-    JOIN_PASSWORD: "{{ ipa_join_password }}"
+    JOIN_PASSWORD: "{{ join_password }}"
 
