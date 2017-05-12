@@ -29,7 +29,7 @@
     state: present
 
 - name: Run client install utility
-  command: >
+  shell: >
     ipa-client-install 
     -U
     -p {{ join_account }}
