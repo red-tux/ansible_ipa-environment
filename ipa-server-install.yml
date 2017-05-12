@@ -22,7 +22,7 @@
 # join_password
 # replicate_with
 
-- hosts: ipa-replicants
+- hosts: ipa-replicant
   become: true
 
   roles:
