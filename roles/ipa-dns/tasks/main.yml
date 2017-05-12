@@ -1,2 +1,31 @@
 ---
 # tasks file for ipa-dns
+
+- name: kinit for the admin user
+  shell: echo {{ ipaserver_admin_password|quote }} | kinit admin
+
+- name: "Configure dns forward {{ item.forwarder | default('--skiped--') }}"
+  shell: ipa dnsforwardzone-add "{{ item.name }}" --forwarder "{{ item.forwarder }}" --forward-policy "{{ item.policy | default('only') }}"
+  register: ipa_out
+  with_items: "{{ forwards }}"
+  when: forwards is defined
+  failed_when: "'already exists' not in ipa_out.stderr and ipa_out.rc!=0"
+  changed_when: "'already exists' not in ipa_out.stderr"
+
+- debug:
+    var: ipa_out
+
+- name: "Configure dns zone {{ item | default('--skipped--') }}"
+  shell: ipa dnszone-add --allow-sync-ptr=true --dynamic-update=true "{{ item }}"
+  register: ipa_out
+  with_items: "{{ zones }}"
+  when: zones is defined
+  failed_when: "'already exists' not in ipa_out.stderr and ipa_out.rc!=0"
+  changed_when: "'already exists' not in ipa_out.stderr"
+
+- debug:
+    var: ipa_out
+
+- name: Delete admin kerberos key
+  shell: kdestroy
+

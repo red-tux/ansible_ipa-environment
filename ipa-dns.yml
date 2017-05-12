@@ -1,0 +1,7 @@
+---
+- name: Configure DNS entries
+  hosts: all
+
+  roles:
+  - ipa-dns
+
