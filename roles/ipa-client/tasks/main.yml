@@ -26,6 +26,7 @@
 - name: Disable SElinux
   selinux:
     state: permissive
+    policy: "{{ ansible_selinux.type }}"
   when: disable_selinux | default(false)
 
 - name: Install IDM client
