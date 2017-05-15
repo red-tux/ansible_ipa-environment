@@ -23,6 +23,11 @@
     - ansible_fqdn.split('.')[0] == "localhost"
     - ipa_force_hostname | default('__undefined__') == "__undefined__"
 
+- name: Disable SElinux
+  selinux:
+    state: permissive
+  when: disable_selinux | default(false)
+
 - name: Install IDM client
   yum:
     name: ipa-client

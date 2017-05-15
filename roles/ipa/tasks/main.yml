@@ -28,6 +28,11 @@
 - set_fact:
     is_ipa_root: "{{ replicate_with is not defined }}"
 
+- name: Disable SElinux
+  selinux:
+    state: permissive
+  when: disable_selinux | default(false)
+
 - name: Configure ipa-client for replicant nodes
   include_role:
     name: ipa-client
