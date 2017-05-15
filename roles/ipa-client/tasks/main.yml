@@ -48,6 +48,7 @@
     {{ '--force-join' if ipa_force_join | default(True) else '' }}
     {{ '--request-cert' if ipa_request_cert | default(False) else '' }}
     {{ '--configure-firefox' if ipa_configure_firefox | default(False) else '' }}
+    --all-ip-addresses
   args:
     creates: /etc/krb5.keytab
   environment:
