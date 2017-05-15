@@ -3,3 +3,7 @@
 - name: reload firewalld
   command: firewall-cmd --reload
 
+- name: needs_kdestroy
+  shell: kdestroy
+
+
