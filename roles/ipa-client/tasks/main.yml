@@ -37,6 +37,7 @@
     --mkhomedir
     {{ '--server %s' % ipa_server if ipa_server | default(False) else '' }}
     {{ '--domain %s' % ipa_domain if ipa_domain | default(False) else '' }}
+    {{ '--realm %s' % ipa_realm if ipa_realm | default(False) else '' }}
     {{ '--hostname %s' % ipa_force_hostname if ipa_force_hostname | default(False) else '' }}
     {{ '--force-join' if ipa_force_join | default(True) else '' }}
     {{ '--request-cert' if ipa_request_cert | default(False) else '' }}
