@@ -23,4 +23,6 @@ ipa-server-install \
 {{ '' if ipaserver_host_dns | default(True) else '--no-host-dns' }} \
 {{ '--auto-reverse' if ipaserver_auto_reverse | default(True) else '' }} \
 {{ '--allow-zone-overlap' if ipaserver_zone_overlap | default(False) else '' }} \
-
+{% for zone in ipaserver_reverse_zones %}
+--reverse-zone={{ zone }} \
+{% endfor %}
