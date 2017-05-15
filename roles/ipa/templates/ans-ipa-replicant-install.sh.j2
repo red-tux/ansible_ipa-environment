@@ -2,7 +2,7 @@
 
 ipa-replica-install \
 -U \
--w {{ $JOIN_PASSWORD }} \
+-w $JOIN_PASSWORD \
 -p {{ join_account }} \
 --hostname={{ hostname | default(ansible_fqdn)}} \
 --ip-address={{ replicate_with }} \
