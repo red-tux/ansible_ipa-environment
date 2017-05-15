@@ -66,7 +66,6 @@
     group: root
     mode: 744
   when: is_ipa_root
-t
 
 - name: create template script for ipa-install
   template:
