@@ -84,7 +84,7 @@
 - name: Run the installer
   shell: /root/ans-ipa-srv-install.sh
   args:
-    creates: /etc/ipa/default.conf
+    creates: /etc/dirsrv/slapd-*
   environment:
     ADMIN_PASSWORD: "{{ ipaserver_admin_password | default('none') }}"
     DIR_PASSWORD: "{{ ipaserver_dir_admin_password | default('none') }}"
