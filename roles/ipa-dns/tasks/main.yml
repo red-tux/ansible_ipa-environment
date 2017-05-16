@@ -28,7 +28,9 @@
   with_items: "{{ reverse_entries }}"
   register: ipa_out
   when: reverse_entries is defined
-  failed_when: "'already exists' not in ipa_out.stderr and ipa_out.rc!=0"
+  failed_when:
+    - "'already exists' not in ipa_out.stderr and ipa_out.rc!=0"
+    - "'no modifications to be performed' not in ipa_out.stderr and ipa_out.rc!=0"
   changed_when: "'already exists' not in ipa_out.stderr"
 
 - debug:
