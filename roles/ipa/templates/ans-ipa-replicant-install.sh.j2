@@ -6,5 +6,6 @@ ipa-replica-install \
 --setup-dns \
 --no-forwarders \
 --auto-reverse \
---no-ntp
+--no-ntp \
+{{ '--skip-conncheck' if skip_conncheck | default(False) else '' }} \
 
